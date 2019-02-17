@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
-import PubSub from 'pubsub-js';
+import { connect } from 'react-redux';
+import TimelineAPI from '../api/TimelineAPI';
 
-export default class Header extends Component {
+class Header extends Component {
 
     onSubmitSearch(event) {
         event.preventDefault();
-
-        fetch(`https://instalura-api.herokuapp.com/api/public/fotos/${this.loginPesquisado.value}`)
-        .then(response => response.json())
-        .then(pictures => {
-            PubSub.publish('timeline', pictures);
-        });
+        this.props.search(this.loginPesquisado.value);
     }
 
     render() {
@@ -19,13 +15,14 @@ export default class Header extends Component {
                 <h1 className="header-logo">InstaClone</h1>
 
                 <form className="header-busca" onSubmit={this.onSubmitSearch.bind(this)}>
-                    <input type="text" name="search" placeholder="Pesquisa" className="header-busca-campo" ref={input => this.loginPesquisado = input}/>
+                    <input type="text" name="search" placeholder="Pesquisa" className="header-busca-campo" ref={input => this.loginPesquisado = input} />
                     <input type="submit" value="Buscar" className="header-busca-submit" />
                 </form>
 
                 <nav>
                     <ul className="header-nav">
                         <li className="header-nav-item">
+                            <span>{this.props.message}</span>
                             <a href="#">
                                 ♡
                   {/*<!--                 ♥--> */}
@@ -39,3 +36,19 @@ export default class Header extends Component {
         );
     }
 }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        search: (text) => {
+            dispatch(TimelineAPI.searchPictures(text));
+        }
+    };
+}
+
+const mapStateToProps = state => {
+    return { message: state.header };
+}
+
+const HeaderContainer = connect(mapStateToProps, mapDispatchToProps)(Header);
+
+export default HeaderContainer;

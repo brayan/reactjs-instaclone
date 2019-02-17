@@ -3,11 +3,6 @@ import { Link } from 'react-router-dom';
 
 export default class PictureInfo extends Component {
 
-  componentWillMount() {
-    console.log("Hello from PictureInfo");
-    console.log(this.props);
-  }
-
   render() {
     return (
             <div className="foto-info">
